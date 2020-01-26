@@ -1,31 +1,27 @@
-import Prdd from "./generator.js";
+import Board from "./generator.js";
 import CONST from "./const.js";
 
 const TILE_SIZE = 15;
 
-const size = 120;
-const initialLandPoints = 17;
-const landGrowProb = 1;
-const landGrowDecProb = 0.02;
-const mountainProb = 0.7;
-const mountainDecProb = 0.05;
-const riverProb = 0.1;
-const riverMaxSteps = 30;
-const riverHasToFinishInSea = true;
+const size = 180;
 
-let canvas;
-
-const prdd = new Prdd({
+const params = {
   size,
-  initialLandPoints,
-  landGrowProb,
-  landGrowDecProb,
-  mountainProb,
-  mountainDecProb,
-  riverProb,
-  riverMaxSteps,
-  riverHasToFinishInSea
-});
+  initialLandPoints: 22,
+  landGrowProb: 1.3,
+  landGrowDecProb: 0.02,
+  mountainProb: 0.001,
+  mountainExtendProb: 1,
+  mountainExtendDecProb: 0.06,
+  forestProb: 0.004,
+  forestExtendProb: 1.1,
+  forestExtendDecProb: 0.03,
+  riverProb: 0.1,
+  riverMaxSteps: 30,
+  riverHasToFinishInSea: true
+};
+
+const board = new Board(params);
 
 const color = {
   [CONST.SEA]: [0, 0, 255],
@@ -45,7 +41,7 @@ const colorIntensity = ([r, g, b]) =>
 
 const canvasP5 = new p5(p => {
   p.setup = () => {
-    canvas = p.createCanvas(size * TILE_SIZE, size * TILE_SIZE);
+    p.createCanvas(size * TILE_SIZE, size * TILE_SIZE);
     p.frameRate(15);
     p.colorMode(p.RGB);
     p.noStroke();
@@ -59,24 +55,24 @@ const canvasP5 = new p5(p => {
     p.textSize(15);
     p.textAlign(p.CENTER);
 
-    for (let column = 0; column < prdd.board.length; column++) {
-      for (let row = 0; row < prdd.board[column].length; row++) {
-        const position = prdd.board[column][row];
+    for (let column = 0; column < board.board.length; column++) {
+      for (let row = 0; row < board.board[column].length; row++) {
+        const position = board.board[column][row];
         p.fill(...color[position]);
         p.square(column * TILE_SIZE, row * TILE_SIZE, TILE_SIZE);
         const textColor =
           colorIntensity(color[position]) < 127 ? color.WHITE : color.BLACK;
         p.fill(...textColor);
-        p.text(
-          position,
-          column * TILE_SIZE,
-          row * TILE_SIZE,
-          TILE_SIZE,
-          TILE_SIZE
-        );
+        // p.text(
+        //   position,
+        //   column * TILE_SIZE,
+        //   row * TILE_SIZE,
+        //   TILE_SIZE,
+        //   TILE_SIZE
+        // );
       }
     }
   };
 }, "canvas");
 
-console.log(prdd);
+console.log(board);

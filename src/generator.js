@@ -1,18 +1,27 @@
 import consts from "./const.js";
 const { SEA, LAND, BEACH, MOUNTAIN, RIVER, FOREST } = consts;
 
-const RV_PASS = [LAND, BEACH];
+// const SEA = " ";
+// const LAND = ".";
+// const BEACH = "+";
+// const MOUNTAIN = "A";
+// const FOREST = "T";
+// const RIVER = "*";
 
-class Prdd {
+const RV_PASS = [LAND, BEACH, FOREST];
+
+class Board {
   constructor({
     size,
     initialLandPoints,
     landGrowProb,
     landGrowDecProb,
     mountainProb,
-    mountainDecProb,
+    mountainExtendProb,
+    mountainExtendDecProb,
     forestProb,
-    forestDecProb,
+    forestExtendProb,
+    forestExtendDecProb,
     riverProb,
     riverMaxSteps,
     riverHasToFinishInSea
@@ -22,9 +31,11 @@ class Prdd {
     this.landGrowProb = landGrowProb;
     this.landGrowDecProb = landGrowDecProb;
     this.mountainProb = mountainProb;
-    this.mountainDecProb = mountainDecProb;
+    this.mountainExtendProb = mountainExtendProb;
+    this.mountainExtendDecProb = mountainExtendDecProb;
     this.forestProb = forestProb;
-    this.forestDecProb = forestDecProb;
+    this.forestExtendProb = forestExtendProb;
+    this.forestExtendDecProb = forestExtendDecProb;
     this.riverProb = riverProb;
     this.riverMaxSteps = riverMaxSteps;
     this.riverHasToFinishInSea = riverHasToFinishInSea;
@@ -32,6 +43,8 @@ class Prdd {
       .fill(null)
       .map(() => new Array(size).fill(SEA));
     this.initialPoints = [];
+    this.mountainPoints = [];
+    this.forestPoints = [];
     this.rvCandidate = [];
     this.populate();
   }
@@ -43,8 +56,11 @@ class Prdd {
       this.initialPoints.push([x, y]);
       this.extendLand(x, y, this.landGrowProb);
     }
-    this.initialPoints.forEach(([x, y]) =>
-      this.extendMountains(x, y, this.mountainProb)
+    this.mountainPoints.forEach(([x, y]) =>
+      this.extendMountains(x, y, this.mountainExtendProb)
+    );
+    this.forestPoints.forEach(([x, y]) =>
+      this.extendForests(x, y, this.forestExtendProb)
     );
     this.rvCandidate.forEach(([x, y]) => this.extendRivers(x, y));
     this.clean();
@@ -52,6 +68,8 @@ class Prdd {
 
   extendLand(x, y, growProb) {
     if (this.outOfBoundaries([x, y]) || this.board[x][y] === LAND) return;
+    if (Math.random() < this.mountainProb) this.mountainPoints.push([x, y]);
+    if (Math.random() < this.forestProb) this.forestPoints.push([x, y]);
     if (Math.random() < growProb) {
       this.board[x][y] = LAND;
       this.extendLand(x + 1, y, growProb - this.landGrowDecProb);
@@ -69,29 +87,30 @@ class Prdd {
       this.board[x][y] === SEA ||
       this.board[x][y] === MOUNTAIN ||
       Math.random() > growProb
-    )
+    ) {
       return;
+    }
     this.board[x][y] = MOUNTAIN;
     if (Math.random() < this.riverProb) this.rvCandidate.push([x, y]);
-    this.extendMountains(x + 1, y, growProb - this.mountainDecProb);
-    this.extendMountains(x - 1, y, growProb - this.mountainDecProb);
-    this.extendMountains(x, y + 1, growProb - this.mountainDecProb);
-    this.extendMountains(x, y - 1, growProb - this.mountainDecProb);
+    this.extendMountains(x + 1, y, growProb - this.mountainExtendDecProb);
+    this.extendMountains(x - 1, y, growProb - this.mountainExtendDecProb);
+    this.extendMountains(x, y + 1, growProb - this.mountainExtendDecProb);
+    this.extendMountains(x, y - 1, growProb - this.mountainExtendDecProb);
   }
 
-  extendForest(x, y, growProb) {
+  extendForests(x, y, growProb) {
     if (
       this.outOfBoundaries([x, y]) ||
-      this.board[x][y] === SEA ||
-      this.board[x][y] === MOUNTAIN ||
+      this.board[x][y] !== LAND ||
       Math.random() > growProb
-    )
+    ) {
       return;
+    }
     this.board[x][y] = FOREST;
-    this.extendForest(x + 1, y, growProb - this.forestDecProb);
-    this.extendForest(x - 1, y, growProb - this.forestDecProb);
-    this.extendForest(x, y + 1, growProb - this.forestDecProb);
-    this.extendForest(x, y - 1, growProb - this.forestDecProb);
+    this.extendForests(x + 1, y, growProb - this.forestExtendDecProb);
+    this.extendForests(x - 1, y, growProb - this.forestExtendDecProb);
+    this.extendForests(x, y + 1, growProb - this.forestExtendDecProb);
+    this.extendForests(x, y - 1, growProb - this.forestExtendDecProb);
   }
 
   extendRivers(x, y) {
@@ -168,4 +187,36 @@ class Prdd {
   }
 }
 
-export default Prdd;
+export default Board;
+
+// const size = 120;
+// const initialLandPoints = 17;
+// const landGrowProb = 1;
+// const landGrowDecProb = 0.03;
+// const mountainProb = 0.001;
+// const mountainExtendProb = 1;
+// const mountainExtendDecProb = 0.1;
+// const forestProb = 0.003;
+// const forestExtendProb = 1;
+// const forestExtendDecProb = 0.05;
+// const riverProb = 0.1;
+// const riverMaxSteps = 30;
+// const riverHasToFinishInSea = true;
+
+// const prdd = new Prdd({
+//   size,
+//   initialLandPoints,
+//   landGrowProb,
+//   landGrowDecProb,
+//   mountainProb,
+//   mountainExtendProb,
+//   mountainExtendDecProb,
+//   forestProb,
+//   forestExtendProb,
+//   forestExtendDecProb,
+//   riverProb,
+//   riverMaxSteps,
+//   riverHasToFinishInSea
+// });
+
+// console.log(prdd.toString());
