@@ -1,13 +1,6 @@
 import consts from "./const.js";
 const { SEA, LAND, BEACH, MOUNTAIN, RIVER, FOREST } = consts;
 
-// const SEA = " ";
-// const LAND = ".";
-// const BEACH = "+";
-// const MOUNTAIN = "A";
-// const FOREST = "T";
-// const RIVER = "*";
-
 const RV_PASS = [LAND, BEACH, FOREST];
 
 class Board {
@@ -189,34 +182,3 @@ class Board {
 
 export default Board;
 
-// const size = 120;
-// const initialLandPoints = 17;
-// const landGrowProb = 1;
-// const landGrowDecProb = 0.03;
-// const mountainProb = 0.001;
-// const mountainExtendProb = 1;
-// const mountainExtendDecProb = 0.1;
-// const forestProb = 0.003;
-// const forestExtendProb = 1;
-// const forestExtendDecProb = 0.05;
-// const riverProb = 0.1;
-// const riverMaxSteps = 30;
-// const riverHasToFinishInSea = true;
-
-// const prdd = new Prdd({
-//   size,
-//   initialLandPoints,
-//   landGrowProb,
-//   landGrowDecProb,
-//   mountainProb,
-//   mountainExtendProb,
-//   mountainExtendDecProb,
-//   forestProb,
-//   forestExtendProb,
-//   forestExtendDecProb,
-//   riverProb,
-//   riverMaxSteps,
-//   riverHasToFinishInSea
-// });
-
-// console.log(prdd.toString());

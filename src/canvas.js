@@ -63,13 +63,14 @@ const canvasP5 = new p5(p => {
         const textColor =
           colorIntensity(color[position]) < 127 ? color.WHITE : color.BLACK;
         p.fill(...textColor);
-        // p.text(
-        //   position,
-        //   column * TILE_SIZE,
-        //   row * TILE_SIZE,
-        //   TILE_SIZE,
-        //   TILE_SIZE
-        // );
+        p.textAlign(p.LEFT, p.TOP);
+        p.text(
+          position,
+          column * TILE_SIZE,
+          row * TILE_SIZE,
+          TILE_SIZE,
+          TILE_SIZE
+        );
       }
     }
   };
